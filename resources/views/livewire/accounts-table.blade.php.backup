@@ -1,0 +1,531 @@
+<div class="container-fluid px-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-                <div class="col-md-2">
+                <label class="form-label">{{ __('app.level') }}</label>
+                <select wire:model.live="level" class="form-select">
+                    <option value="">{{ __('app.all_levels') }}</option>
+                    @for ($i = 1; $i <= 5; $i++)
+                        <option value="{{ $i }}">{{ __('app.level') }} {{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">الفرع</label>
+                <select wire:model.live="branchFilter" class="form-select">
+                    <option value="">جميع الفروع</option>
+                    @foreach ($branches as $branch)
+                        <option value="{{ $branch['id'] }}">{{ $branch['name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end")ign-items-center">
+                <div>
+                    <h2 class="h3 mb-0 text-gray-800">{{ __('app.chart_of_accounts') }}</h2>
+                    <p class="text-muted small mb-0">{{ __('app.manage_chart_of_accounts') }}</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button wire:click="toggleView" class="btn btn-outline-primary">
+                        <i class="fas {{ $showTree ? 'fa-table' : 'fa-sitemap' }} me-1"></i>
+                        {{ $showTree ? __('app.table_view') : __('app.tree_view') }}
+                    </button>
+                    <button wire:click="openCreateModal" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>
+                        {{ __('app.add_account') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-6 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                {{ __('app.total_accounts') }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ number_format($statistics['total_accounts']) }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-sitemap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-md-6 mb-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                {{ __('app.active_accounts') }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ number_format($statistics['active_accounts']) }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-md-6 mb-3">
+            <div class="card bg-warning text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                {{ __('app.main_accounts') }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ number_format($statistics['main_accounts']) }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-layer-group fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-md-6 mb-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                {{ __('app.leaf_accounts') }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ number_format($statistics['leaf_accounts']) }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-leaf fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-md-6 mb-3">
+            <div class="card bg-secondary text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                {{ __('app.assets_accounts') }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ number_format($statistics['assets_accounts']) }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-coins fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-md-6 mb-3">
+            <div class="card bg-danger text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                {{ __('app.expenses_accounts') }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ number_format($statistics['expenses_accounts']) }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">{{ __('app.filters') }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">{{ __('app.search') }}</label>
+                    <input wire:model.live="search" type="text" class="form-control"
+                        placeholder="{{ __('app.search_by_name_or_code') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ __('app.status') }}</label>
+                    <select wire:model.live="isActive" class="form-select">
+                        <option value="">{{ __('app.all_statuses') }}</option>
+                        <option value="1">{{ __('app.active') }}</option>
+                        <option value="0">{{ __('app.inactive') }}</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ __('app.level') }}</label>
+                    <select wire:model.live="level" class="form-select">
+                        <option value="">{{ __('app.all_levels') }}</option>
+                        @for ($i = 1; $i <= 5; $i++)
+                            <option value="{{ $i }}">{{ __('app.level') }} {{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">الفرع</label>
+                    <select wire:model.live="branchFilter" class="form-select">
+                        <option value="">جميع الفروع</option>
+                        @foreach ($branches as $branch)
+                            <option value="{{ $branch['id'] }}">{{ $branch['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button wire:click="resetFilters" class="btn btn-outline-secondary">
+                        <i class="fas fa-undo me-1"></i>
+                        {{ __('app.reset_filters') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accounts Table -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ __('app.accounts_list') }}</h6>
+        </div>
+        <div class="card-body">
+            @if ($accounts->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{{ __('app.code') }}</th>
+                                <th>{{ __('app.account_name') }}</th>
+                                <th>{{ __('app.account_level_type') }}</th>
+                                <th>{{ __('app.account_nature') }}</th>
+                                <th>{{ __('app.parent_account') }}</th>
+                                <th>{{ __('app.level') }}</th>
+                                <th>الفرع</th>
+                                <th>{{ __('app.balance') }}</th>
+                                <th>{{ __('app.status') }}</th>
+                                <th>{{ __('app.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($accounts as $account)
+                                <tr>
+                                    <td>
+                                        <span class="fw-bold text-primary">{{ $account->code }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            @if ($showTree && isset($account->level_display) && $account->level_display > 0)
+                                                {!! $account->indent !!}
+                                                <i class="fas fa-long-arrow-alt-right text-secondary me-1"></i>
+                                            @elseif(!$showTree && $account->level > 1)
+                                                <span class="text-muted me-1">
+                                                    {!! str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $account->level - 1) !!}
+                                                    <i class="fas fa-long-arrow-alt-right text-secondary"></i>
+                                                </span>
+                                            @endif
+                                            <span class="fw-medium">{{ $account->name }}</span>
+                                            @if ($account->has_children)
+                                                <i class="fas fa-folder text-warning ms-1"
+                                                    title="{{ __('app.has_children') }}"></i>
+                                            @endif
+                                        </div>
+                                        @if ($account->name_en)
+                                            <small class="text-muted d-block">{{ $account->name_en }}</small>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info text-white">
+                                            {{ $account->account_level_type_name }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if ($account->account_nature)
+                                            <span
+                                                class="badge bg-{{ $account->account_nature === 'debit' ? 'warning' : ($account->account_nature === 'credit' ? 'primary' : 'secondary') }} text-white">
+                                                {{ $account->account_nature_name }}
+                                            </span>
+                                        @else
+                                            <span class="badge bg-light text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($account->parent)
+                                            <span class="text-sm">{{ $account->parent->name }}</span>
+                                        @else
+                                            <span class="text-muted">{{ __('app.main_account') }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ $account->level }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($account->branch)
+                                            <span class="text-sm">{{ $account->branch->name }}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="fw-bold {{ $account->balance >= 0 ? 'text-success' : 'text-danger' }}">
+                                            {{ number_format($account->balance, 2) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button wire:click="toggleStatus({{ $account->id }})"
+                                            class="btn btn-sm {{ $account->is_active ? 'btn-success' : 'btn-secondary' }}"
+                                            style="border: none !important; background: none !important; padding: 0 !important;">
+                                            <span
+                                                class="badge bg-{{ $account->is_active ? 'success' : 'secondary' }}">
+                                                {{ $account->is_active ? __('app.active') : __('app.inactive') }}
+                                            </span>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button wire:click="openViewModal({{ $account->id }})"
+                                                class="btn btn-sm p-1"
+                                                style="border: none !important; background: none !important;"
+                                                title="{{ __('app.view') }}">
+                                                <i class="fas fa-eye text-info"></i>
+                                            </button>
+                                            <button wire:click="openEditModal({{ $account->id }})"
+                                                class="btn btn-sm p-1"
+                                                style="border: none !important; background: none !important;"
+                                                title="{{ __('app.edit') }}">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </button>
+                                            @if (!$account->has_children)
+                                                <button wire:click="delete({{ $account->id }})"
+                                                    class="btn btn-sm p-1"
+                                                    style="border: none !important; background: none !important;"
+                                                    title="{{ __('app.delete') }}"
+                                                    wire:confirm="{{ __('app.confirm_delete') }}">
+                                                    <i class="fas fa-trash text-danger"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination - إخفاء التصفح في العرض الشجري -->
+                @if (!$showTree && method_exists($accounts, 'links'))
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $accounts->links() }}
+                    </div>
+                @endif
+            @else
+                <div class="text-center py-5">
+                    <i class="fas fa-sitemap fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">{{ __('app.no_accounts_found') }}</h5>
+                    <p class="text-muted">{{ __('app.add_first_account') }}</p>
+                    <button wire:click="openCreateModal" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>
+                        {{ __('app.add_account') }}
+                    </button>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Account Modal -->
+    @if ($showModal)
+        <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            @if ($modalMode === 'create')
+                                {{ __('app.add_account') }}
+                            @elseif($modalMode === 'edit')
+                                {{ __('app.edit_account') }}
+                            @else
+                                {{ __('app.view_account') }}
+                            @endif
+                        </h5>
+                        <button type="button" class="btn-close" wire:click="closeModal"></button>
+                    </div>
+
+                    <form wire:submit="save">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('app.account_level_type') }} *</label>
+                                    <select wire:model.live="accountLevelType"
+                                        class="form-select @error('accountLevelType') is-invalid @enderror"
+                                        {{ $modalMode === 'view' ? 'disabled' : '' }}>
+                                        <option value="">{{ __('app.select_account_level_type') }}</option>
+                                        @foreach ($accountLevelTypesOptions as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('accountLevelType')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- إظهار طبيعة الحساب فقط للحسابات التشغيلية --}}
+                                @if ($accountLevelType === 'account')
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">{{ __('app.account_nature') }} *</label>
+                                        <select wire:model.live="accountNature"
+                                            class="form-select @error('accountNature') is-invalid @enderror"
+                                            {{ $modalMode === 'view' ? 'disabled' : '' }}>
+                                            <option value="">{{ __('app.select_account_nature') }}</option>
+                                            @foreach ($accountNatureOptions as $key => $value)
+                                                <option value="{{ $key }}">{{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('accountNature')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                @endif
+
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">{{ __('app.account_name') }} *</label>
+                                    <input wire:model="name" type="text"
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        {{ $modalMode === 'view' ? 'readonly' : '' }}>
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">{{ __('app.english_name') }}</label>
+                                    <input wire:model="nameEn" type="text"
+                                        class="form-control @error('nameEn') is-invalid @enderror"
+                                        {{ $modalMode === 'view' ? 'readonly' : '' }}>
+                                    @error('nameEn')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('app.parent_account') }}</label>
+                                    <select wire:model.live="parentId"
+                                        class="form-select @error('parentId') is-invalid @enderror"
+                                        {{ $modalMode === 'view' ? 'disabled' : '' }}>
+                                        <option value="">{{ __('app.main_account') }}</option>
+                                        @foreach ($parentAccounts as $parent)
+                                            @if ($parent['id'] != $accountId)
+                                                <option value="{{ $parent['id'] }}">
+                                                    {{ $parent['code'] }} - {{ $parent['name'] }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('parentId')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">الفرع</label>
+                                    <select wire:model="branchId"
+                                        class="form-select @error('branchId') is-invalid @enderror"
+                                        {{ $modalMode === 'view' ? 'disabled' : '' }}>
+                                        <option value="">اختر الفرع</option>
+                                        @foreach ($branches as $branch)
+                                            <option value="{{ $branch['id'] }}">{{ $branch['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('branchId')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">{{ __('app.description') }}</label>
+                                    <textarea wire:model="description" class="form-control @error('description') is-invalid @enderror" rows="3"
+                                        {{ $modalMode === 'view' ? 'readonly' : '' }}></textarea>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                @if ($modalMode !== 'create')
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-check">
+                                            <input wire:model="isActiveForm" class="form-check-input" type="checkbox"
+                                                id="isActiveForm" {{ $modalMode === 'view' ? 'disabled' : '' }}>
+                                            <label class="form-check-label" for="isActiveForm">
+                                                {{ __('app.active') }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" wire:click="closeModal">
+                                {{ __('app.cancel') }}
+                            </button>
+                            @if ($modalMode !== 'view')
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-1"></i>
+                                    {{ __('app.save') }}
+                                </button>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
+
+@script
+    <script>
+        $wire.on('account-updated', () => {
+            // يمكن إضافة أي عمليات JavaScript هنا
+        });
+
+        // إضافة دالة للألوان
+        Alpine.data('accountsTable', () => ({
+            getAccountTypeBadgeColor(type) {
+                const colors = {
+                    'assets': 'success',
+                    'liabilities': 'danger',
+                    'equity': 'primary',
+                    'revenue': 'info',
+                    'expenses': 'warning'
+                };
+                return colors[type] || 'secondary';
+            }
+        }));
+    </script>
+@endscript
